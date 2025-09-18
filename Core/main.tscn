@@ -98,7 +98,7 @@ theme_override_fonts/bold_italics_font = ExtResource("3_okbgg")
 theme_override_fonts/italics_font = ExtResource("3_okbgg")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_avlqc")
 bbcode_enabled = true
-text = "[b][Insert name here]
+text = "[b]FrogStudio    v.1.0.0 (beta)
 (c) FroglightInteractive 2025
 Distributed under the terms of the MIT license. See: https://opensource.org/license/mit[/b]
 
