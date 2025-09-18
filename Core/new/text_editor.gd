@@ -6,6 +6,7 @@ extends Control
 @onready var caret_pos: Label = $VBoxContainer/HBoxContainer/CaretPos
 @onready var current_file_label: Label = $VBoxContainer/HBoxContainer/CurrentFileLabel
 @onready var help_screen: RichTextLabel = $VBoxContainer/HelpScreen
+@onready var error_label: Label = $VBoxContainer/HBoxContainer/ErrorLabel
 
 enum EditorMode {
 	NORMAL,
@@ -98,6 +99,8 @@ func _on_command_bar_text_submitted(new_text: String) -> void:
 			_open(args)
 		"help":
 			_show_help()
+		_:
+			mark_error("Invalid Command", 2)
 	
 	mode = EditorMode.NORMAL
 	command_bar.hide()
@@ -152,7 +155,7 @@ func _save(args: Array) -> void:
 		file.store_string(editor.text)
 		file.close()
 	else:
-		print("Could not save to '%s'" % save_path)
+		mark_error("Could not save to '%s'" % save_path, 2)
 
 
 func _open(args: Array) -> void:
@@ -164,9 +167,9 @@ func _open(args: Array) -> void:
 			editor.text = file_text
 			current_file_label.text = path
 		else:
-			print("File '%s' not found!" % path)
+			mark_error("File '%s' not found" % path, 2)
 	else:
-		print("Command 'open' needs a file name!")
+		mark_error("Command 'open' needs a file name", 2)
 
 
 func _hide_help() -> void:
@@ -180,3 +183,11 @@ func _show_help() -> void:
 	in_help = true
 	help_screen.show()
 	editor.hide()
+
+
+func mark_error(error_text: String, time: float = 0.0) -> void:
+	error_label.text = error_text
+	
+	if time > 0.0:
+		await get_tree().create_timer(time).timeout
+		error_label.text = ""

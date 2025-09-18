@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cnw713gv73sco"]
+[gd_scene load_steps=10 format=3 uid="uid://cnw713gv73sco"]
 
 [ext_resource type="Script" uid="uid://ciw3eiln12rhc" path="res://Core/new/text_editor.gd" id="1_0xtr2"]
 [ext_resource type="FontFile" uid="uid://i7nks7j06ka3" path="res://Assets/Fonts/0xProto_2_500/0xProto-Regular.otf" id="2_vym7j"]
@@ -13,6 +13,10 @@ bg_color = Color(1, 1, 1, 1)
 [sub_resource type="LabelSettings" id="LabelSettings_0xtr2"]
 font = ExtResource("2_vym7j")
 font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_kguml"]
+font = ExtResource("2_vym7j")
+font_color = Color(1, 0.28235295, 0.18431373, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0xtr2"]
 
@@ -93,15 +97,24 @@ text = "NORMAL"
 label_settings = SubResource("LabelSettings_0xtr2")
 horizontal_alignment = 1
 
+[node name="ErrorLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_qtvq4")
+theme_override_styles/focus = SubResource("StyleBoxFlat_qtvq4")
+label_settings = SubResource("LabelSettings_kguml")
+horizontal_alignment = 1
+
 [node name="CurrentFileLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/normal = SubResource("StyleBoxFlat_qtvq4")
 theme_override_styles/focus = SubResource("StyleBoxFlat_qtvq4")
-text = "/home/alexander/test.txt"
+text = "[no file]"
 label_settings = SubResource("LabelSettings_0xtr2")
 horizontal_alignment = 1
+text_overrun_behavior = 3
 
 [node name="CaretPos" type="Label" parent="VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(150, 0)
