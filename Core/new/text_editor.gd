@@ -5,6 +5,7 @@ extends Control
 @onready var command_bar: LineEdit = $VBoxContainer/CommandBar
 @onready var caret_pos: Label = $VBoxContainer/HBoxContainer/CaretPos
 @onready var current_file_label: Label = $VBoxContainer/HBoxContainer/CurrentFileLabel
+@onready var help_screen: RichTextLabel = $VBoxContainer/HelpScreen
 
 enum EditorMode {
 	NORMAL,
@@ -13,14 +14,23 @@ enum EditorMode {
 }
 var mode: EditorMode = EditorMode.NORMAL
 
+var in_help: bool = false
+
 
 func _ready() -> void:
 	update_ui()
 	editor.grab_focus()
 	command_bar.hide()
+	help_screen.hide()
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if in_help:
+		if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+			_hide_help()
+			accept_event()
+		return
+	
 	if event is InputEventKey and event.pressed:
 		match mode:
 			EditorMode.NORMAL:
@@ -43,6 +53,8 @@ func _unhandled_input(event: InputEvent) -> void:
 						editor.set_caret_line(editor.get_caret_line() + 1)
 					KEY_K:
 						editor.set_caret_line(editor.get_caret_line() - 1)
+					KEY_F1:
+						_show_help()
 			EditorMode.INSERT:
 				match event.keycode:
 					KEY_ESCAPE:
@@ -84,6 +96,8 @@ func _on_command_bar_text_submitted(new_text: String) -> void:
 			_save(args)
 		"o":
 			_open(args)
+		"help":
+			_show_help()
 	
 	mode = EditorMode.NORMAL
 	command_bar.hide()
@@ -153,3 +167,16 @@ func _open(args: Array) -> void:
 			print("File '%s' not found!" % path)
 	else:
 		print("Command 'open' needs a file name!")
+
+
+func _hide_help() -> void:
+	in_help = false
+	help_screen.hide()
+	editor.show()
+	editor.grab_focus()
+
+
+func _show_help() -> void:
+	in_help = true
+	help_screen.show()
+	editor.hide()

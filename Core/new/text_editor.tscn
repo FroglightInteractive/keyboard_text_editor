@@ -1,7 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://cnw713gv73sco"]
+[gd_scene load_steps=9 format=3 uid="uid://cnw713gv73sco"]
 
 [ext_resource type="Script" uid="uid://ciw3eiln12rhc" path="res://Core/new/text_editor.gd" id="1_0xtr2"]
 [ext_resource type="FontFile" uid="uid://i7nks7j06ka3" path="res://Assets/Fonts/0xProto_2_500/0xProto-Regular.otf" id="2_vym7j"]
+[ext_resource type="FontFile" uid="uid://bs2vnnroo54au" path="res://Assets/Fonts/0xProto_2_500/0xProto-Bold.otf" id="3_kguml"]
+[ext_resource type="FontFile" uid="uid://bes4xjxby8ilg" path="res://Assets/Fonts/0xProto_2_500/ZxProto/ZxProto-Italic.otf" id="4_r0eoa"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qtvq4"]
 
@@ -39,6 +41,32 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="HelpScreen" type="RichTextLabel" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/normal_font = ExtResource("2_vym7j")
+theme_override_fonts/bold_font = ExtResource("3_kguml")
+theme_override_fonts/bold_italics_font = ExtResource("4_r0eoa")
+theme_override_fonts/italics_font = ExtResource("4_r0eoa")
+bbcode_enabled = true
+text = "[b]FrogStudio    v.1.0.0 (beta)
+(c) FroglightInteractive 2025
+Distributed under the terms of the MIT license. See: https://opensource.org/license/mit[/b]
+
+
+[b]-- Commands --[/b]
+
+[b][color=green]help[/color][/b]  --  Display this help text
+
+[b][color=green]q[/color][/b]  --  Exit program
+
+[b][color=green]esc[/color][/b]  --  Exit this help text
+
+[b][color=green]o[/color][color=yellow] [i]<filename>[/i][/color][/b]  --  Open the named file
+
+[b][color=green]w[/color][color=yellow] [i][<filename>][/i][/color][/b]  --  Save the document into a new file or into the existing file"
 
 [node name="TextEdit" type="TextEdit" parent="VBoxContainer"]
 layout_mode = 2
