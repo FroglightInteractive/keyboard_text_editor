@@ -1,14 +1,18 @@
 extends LineEdit
 
-@onready var editor: TextEdit = $"../Editor"
-@onready var error_label: Label = $"../StatusBar/MarginContainer/HBoxContainer/ErrorLabel"
-@onready var help_display: RichTextLabel = $"../HelpDisplay"
+@onready var help_display: RichTextLabel = $"../../HelpDisplay"
+@onready var editor: CodeEdit = $"../../Editor"
+@onready var error_label: Label = $"../../StatusBar/MarginContainer/HBoxContainer/ErrorLabel"
+@onready var current_file_label: Label = $"../../StatusBar/MarginContainer/HBoxContainer/CurrentFileLabel"
 
 var in_help: bool = false
 
 
-func _ready() -> void:
-	keep_editing_on_text_submit = true
+func _unhandled_key_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		grab_focus()
+		editor.release_focus()
+		accept_event()
 
 
 func _on_command_submitted(command: String) -> void:
@@ -29,6 +33,8 @@ func _on_command_submitted(command: String) -> void:
 		_:
 			mark_error("Invalid Command!")
 	clear()
+	editor.grab_focus()
+	self.release_focus()
 
 
 func _save(args: Array) -> void:
@@ -42,6 +48,7 @@ func _open(args: Array) -> void:
 		if file:
 			var file_text = file.get_as_text()
 			editor.text = file_text
+			current_file_label.text = path
 		else:
 			mark_error("File: '%s' not found!" % path)
 	else:

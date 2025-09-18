@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://b3hif652o2nud"]
+[gd_scene load_steps=18 format=3 uid="uid://b3hif652o2nud"]
 
 [ext_resource type="Script" uid="uid://dpai1avhs42yy" path="res://Core/status_bar.gd" id="1_ha1x3"]
 [ext_resource type="FontFile" uid="uid://i7nks7j06ka3" path="res://Assets/Fonts/0xProto_2_500/0xProto-Regular.otf" id="1_xdvn6"]
@@ -11,6 +11,17 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1bvp3"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lquwl"]
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_xdvn6"]
+number_color = Color(0.8745098, 0.7490196, 1, 1)
+symbol_color = Color(1, 1, 1, 1)
+function_color = Color(0.2262, 0.62320995, 0.87, 1)
+member_variable_color = Color(1, 1, 1, 1)
+color_regions = {
+"\" \"": Color(0.7882353, 0.57254905, 0.19607843, 1),
+"#": Color(0.3, 0.6, 0.3, 1),
+"' '": Color(0.79, 0.57275003, 0.1975, 1)
+}
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7dm0k"]
 bg_color = Color(1, 1, 1, 1)
@@ -30,6 +41,9 @@ font_color = Color(0.8150196, 3.5857408e-06, 7.70092e-07, 1)
 [sub_resource type="LabelSettings" id="LabelSettings_ig7tw"]
 font = ExtResource("1_xdvn6")
 font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_xdvn6"]
+font = ExtResource("1_xdvn6")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7dm0k"]
 
@@ -73,7 +87,7 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
-focus_mode = 0
+focus_mode = 2
 mouse_filter = 2
 theme_override_fonts/normal_font = ExtResource("1_xdvn6")
 theme_override_fonts/bold_font = ExtResource("2_avlqc")
@@ -82,28 +96,45 @@ theme_override_fonts/italics_font = ExtResource("3_okbgg")
 bbcode_enabled = true
 text = "[b][Insert name here]
 (c) FroglightInteractive 2025
-Distributed under the terms of the MIT license. See https://opensource.org/license/mit[/b]
+Distributed under the terms of the MIT license. See: https://opensource.org/license/mit[/b]
 
 
 [b]-- Commands --[/b]
 
 [b][color=green]help, h[/color][/b]  --  Display this help text
 
-[b][color=green]exit, quit, q[/color][/b]  --  Exit the program
+[b][color=green]exit, quit, q[/color][/b]  --  Exit info panel or exit program
 
-[b][color=green]open[/color][color=yellow] [i]<filename>[/i][/color][/b]  --  Open the named file
+[b][color=green]open, o[/color][color=yellow] [i]<filename>[/i][/color][/b]  --  Open the named file
 
-[b][color=green]save[/color][color=yellow] [i][<filename>][/i][/color][/b]  --  Save the document into a new file or into the existing file"
+[b][color=green]save, w[/color][color=yellow] [i][<filename>][/i][/color][/b]  --  Save the document into a new file or into the existing file"
 selection_enabled = true
 
 [node name="Editor" type="CodeEdit" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.87025946, 0.8787655, 0.88941205, 1)
 theme_override_fonts/font = ExtResource("1_xdvn6")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_h2yge")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_1bvp3")
 theme_override_styles/read_only = SubResource("StyleBoxEmpty_lquwl")
+scroll_smooth = true
+caret_type = 1
+caret_blink = true
+syntax_highlighter = SubResource("CodeHighlighter_xdvn6")
+highlight_all_occurrences = true
+gutters_draw_line_numbers = true
 indent_automatic = true
+auto_brace_completion_enabled = true
+auto_brace_completion_highlight_matching = true
+auto_brace_completion_pairs = {
+"\"": "\"",
+"'": "'",
+"(": ")",
+"<": ">",
+"[": "]",
+"{": "}"
+}
 
 [node name="StatusBar" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 24)
@@ -125,7 +156,6 @@ layout_mode = 2
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "D:/GodotProjects/keyboard_text_editor/main.gd"
 label_settings = SubResource("LabelSettings_7dm0k")
 text_overrun_behavior = 3
 
@@ -151,12 +181,22 @@ text = "Ln 1 / 1: Col 1"
 label_settings = SubResource("LabelSettings_ig7tw")
 horizontal_alignment = 2
 
-[node name="CommandBar" type="LineEdit" parent="MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = ":"
+label_settings = SubResource("LabelSettings_xdvn6")
+
+[node name="CommandBar" type="LineEdit" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("1_xdvn6")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_7dm0k")
 theme_override_styles/read_only = SubResource("StyleBoxEmpty_ig7tw")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_0xm2m")
 script = ExtResource("2_5yh6k")
 
-[connection signal="text_submitted" from="MarginContainer/VBoxContainer/CommandBar" to="MarginContainer/VBoxContainer/CommandBar" method="_on_command_submitted"]
+[connection signal="text_submitted" from="MarginContainer/VBoxContainer/HBoxContainer/CommandBar" to="MarginContainer/VBoxContainer/HBoxContainer/CommandBar" method="_on_command_submitted"]
