@@ -1,12 +1,12 @@
 extends Control
 
-@onready var editor: TextEdit = $VBoxContainer/TextEdit
-@onready var mode_indicator: Label = $VBoxContainer/HBoxContainer/ModeIndicator
-@onready var command_bar: LineEdit = $VBoxContainer/CommandBar
-@onready var caret_pos: Label = $VBoxContainer/HBoxContainer/CaretPos
-@onready var current_file_label: Label = $VBoxContainer/HBoxContainer/CurrentFileLabel
-@onready var help_screen: RichTextLabel = $VBoxContainer/HelpScreen
-@onready var error_label: Label = $VBoxContainer/HBoxContainer/ErrorLabel
+@onready var editor: TextEdit = $MarginContainer/VBoxContainer/TextEdit
+@onready var mode_indicator: Label = $MarginContainer/VBoxContainer/HBoxContainer/ModeIndicator
+@onready var command_bar: LineEdit = $MarginContainer/VBoxContainer/CommandBar
+@onready var caret_pos: Label = $MarginContainer/VBoxContainer/HBoxContainer/CaretPos
+@onready var current_file_label: Label = $MarginContainer/VBoxContainer/HBoxContainer/CurrentFileLabel
+@onready var help_screen: RichTextLabel = $MarginContainer/VBoxContainer/HelpScreen
+@onready var error_label: Label = $MarginContainer/VBoxContainer/HBoxContainer/ErrorLabel
 
 enum EditorMode {
 	NORMAL,
