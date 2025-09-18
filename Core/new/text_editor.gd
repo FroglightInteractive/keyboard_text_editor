@@ -1,6 +1,6 @@
 extends Control
 
-@onready var editor: TextEdit = $MarginContainer/VBoxContainer/TextEdit
+@onready var editor: CodeEdit = $MarginContainer/VBoxContainer/TextEdit
 @onready var mode_indicator: Label = $MarginContainer/VBoxContainer/HBoxContainer/ModeIndicator
 @onready var command_bar: LineEdit = $MarginContainer/VBoxContainer/CommandBar
 @onready var caret_pos: Label = $MarginContainer/VBoxContainer/HBoxContainer/CaretPos
@@ -14,6 +14,17 @@ enum EditorMode {
 	COMMAND,
 }
 var mode: EditorMode = EditorMode.NORMAL
+
+var command_aliases: Dictionary[String, String] = {
+	"q": "q",
+	"quit": "q",
+	"w": "w",
+	"write": "w",
+	"o": "o",
+	"open": "o",
+	"help": "help",
+	"h": "help",
+}
 
 var in_help: bool = false
 
@@ -90,6 +101,25 @@ func _on_command_bar_text_submitted(new_text: String) -> void:
 	var cmd = args[0]
 	args.remove_at(0)
 	
+	# aliases
+	if command_aliases.has(cmd):
+		cmd = command_aliases[cmd]
+	
+	# handle alias definition command
+	if cmd == "alias":
+		if args.size() >= 2:
+			var alias_name = args[0]
+			var real_cmd = args[1]
+			command_aliases[alias_name] = real_cmd
+			print("Alias '%s' -> '%s' added" % [alias_name, real_cmd])
+		else:
+			mark_error("Usage: alias <name> <command>", 2)
+		mode = EditorMode.NORMAL
+		command_bar.hide()
+		editor.grab_focus()
+		update_ui()
+		return
+	
 	match cmd:
 		"q":
 			get_tree().quit()
@@ -99,6 +129,8 @@ func _on_command_bar_text_submitted(new_text: String) -> void:
 			_open(args)
 		"help":
 			_show_help()
+		"":
+			mark_error("No command given", 2)
 		_:
 			mark_error("Invalid Command", 2)
 	

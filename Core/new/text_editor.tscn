@@ -77,19 +77,33 @@ Distributed under the terms of the MIT license. See: https://opensource.org/lice
 
 [b][color=green]o[/color][color=yellow] [i]<filename>[/i][/color][/b]  --  Open the named file
 
-[b][color=green]w[/color][color=yellow] [i][<filename>][/i][/color][/b]  --  Save the document into a new file or into the existing file"
+[b][color=green]w[/color][color=yellow] [i][<filename>][/i][/color][/b]  --  Save the document into a new file or into the existing file
 
-[node name="TextEdit" type="TextEdit" parent="MarginContainer/VBoxContainer"]
+[b][color=green]alias[/color][color=yellow] [i]<name> <command>[/i][/color][/b]  --  Make an alias with the given name to the given command"
+
+[node name="TextEdit" type="CodeEdit" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_colors/caret_color = Color(1, 1, 1, 0.52156866)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
 theme_override_constants/caret_width = 10
 theme_override_fonts/font = ExtResource("2_vym7j")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_qtvq4")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_qtvq4")
+caret_type = 1
 caret_blink = true
+gutters_draw_line_numbers = true
+indent_automatic = true
+auto_brace_completion_enabled = true
+auto_brace_completion_highlight_matching = true
+auto_brace_completion_pairs = {
+"\"": "\"",
+"'": "'",
+"(": ")",
+"<": ">",
+"[": "]",
+"{": "}"
+}
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
