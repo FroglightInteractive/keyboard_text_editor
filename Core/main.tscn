@@ -1,7 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://b3hif652o2nud"]
+[gd_scene load_steps=16 format=3 uid="uid://b3hif652o2nud"]
 
 [ext_resource type="Script" uid="uid://dpai1avhs42yy" path="res://Core/status_bar.gd" id="1_ha1x3"]
+[ext_resource type="FontFile" uid="uid://i7nks7j06ka3" path="res://Assets/Fonts/0xProto_2_500/0xProto-Regular.otf" id="1_xdvn6"]
 [ext_resource type="Script" uid="uid://c816en3tciw3a" path="res://Core/command_bar.gd" id="2_5yh6k"]
+[ext_resource type="FontFile" uid="uid://bs2vnnroo54au" path="res://Assets/Fonts/0xProto_2_500/0xProto-Bold.otf" id="2_avlqc"]
+[ext_resource type="FontFile" uid="uid://ctdc75g0u62f4" path="res://Assets/Fonts/0xProto_2_500/0xProto-Italic.otf" id="3_okbgg"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h2yge"]
 
@@ -17,12 +20,15 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
 [sub_resource type="LabelSettings" id="LabelSettings_7dm0k"]
+font = ExtResource("1_xdvn6")
 font_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_5yh6k"]
+font = ExtResource("1_xdvn6")
 font_color = Color(0.8150196, 3.5857408e-06, 7.70092e-07, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_ig7tw"]
+font = ExtResource("1_xdvn6")
 font_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7dm0k"]
@@ -63,9 +69,37 @@ theme_override_constants/margin_bottom = 3
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
+[node name="HelpDisplay" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 0
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("1_xdvn6")
+theme_override_fonts/bold_font = ExtResource("2_avlqc")
+theme_override_fonts/bold_italics_font = ExtResource("3_okbgg")
+theme_override_fonts/italics_font = ExtResource("3_okbgg")
+bbcode_enabled = true
+text = "[b][Insert name here]
+(c) FroglightInteractive 2025
+Distributed under the terms of the MIT license. See https://opensource.org/license/mit[/b]
+
+
+[b]-- Commands --[/b]
+
+[b][color=green]help, h[/color][/b]  --  Display this help text
+
+[b][color=green]exit, quit, q[/color][/b]  --  Exit the program
+
+[b][color=green]open[/color][color=yellow] [i]<filename>[/i][/color][/b]  --  Open the named file
+
+[b][color=green]save[/color][color=yellow] [i][<filename>][/i][/color][/b]  --  Save the document into a new file or into the existing file"
+selection_enabled = true
+
 [node name="Editor" type="CodeEdit" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("1_xdvn6")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_h2yge")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_1bvp3")
 theme_override_styles/read_only = SubResource("StyleBoxEmpty_lquwl")
@@ -119,6 +153,7 @@ horizontal_alignment = 2
 
 [node name="CommandBar" type="LineEdit" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("1_xdvn6")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_7dm0k")
 theme_override_styles/read_only = SubResource("StyleBoxEmpty_ig7tw")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_0xm2m")

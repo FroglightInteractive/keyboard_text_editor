@@ -2,6 +2,9 @@ extends LineEdit
 
 @onready var editor: TextEdit = $"../Editor"
 @onready var error_label: Label = $"../StatusBar/MarginContainer/HBoxContainer/ErrorLabel"
+@onready var help_display: RichTextLabel = $"../HelpDisplay"
+
+var in_help: bool = false
 
 
 func _ready() -> void:
@@ -46,7 +49,12 @@ func _open(args: Array) -> void:
 
 
 func _quit() -> void:
-	get_tree().quit()
+	if in_help:
+		help_display.hide()
+		editor.show()
+		in_help = false
+	else:
+		get_tree().quit()
 
 
 func path_to_os(path: String) -> String:
@@ -73,4 +81,6 @@ func mark_error(error_text: String, time: float = 0.0) -> void:
 
 
 func _help() -> void:
-	pass
+	editor.hide()
+	help_display.show()
+	in_help = true
