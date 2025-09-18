@@ -1,11 +1,15 @@
 extends LineEdit
 
+@onready var editor: TextEdit = $"../Editor"
+@onready var error_label: Label = $"../StatusBar/MarginContainer/HBoxContainer/ErrorLabel"
+
 
 func _ready() -> void:
 	keep_editing_on_text_submit = true
 
 
 func _on_command_submitted(command: String) -> void:
+	error_label.text = ""
 	command = command.strip_edges()
 	var args = command.split(" ")
 	var cmd = args[0]
@@ -17,8 +21,10 @@ func _on_command_submitted(command: String) -> void:
 			_open(args)
 		"quit", "q", "exit":
 			_quit()
+		"help", "h":
+			_help()
 		_:
-			print("invalid command")
+			mark_error("Invalid Command!")
 	clear()
 
 
@@ -27,8 +33,44 @@ func _save(args: Array) -> void:
 
 
 func _open(args: Array) -> void:
-	print(args)
+	if args:
+		var path = path_to_os(args[0])
+		var file = FileAccess.open(path, FileAccess.READ)
+		if file:
+			var file_text = file.get_as_text()
+			editor.text = file_text
+		else:
+			mark_error("File: '%s' not found!" % path)
+	else:
+		mark_error("'open' needs a file name!")
 
 
 func _quit() -> void:
 	get_tree().quit()
+
+
+func path_to_os(path: String) -> String:
+	var os = OS.get_name()
+	if os == "Windows" or os == "UWP":
+		return path.replace("/", "\\")
+	else:
+		return path
+
+func path_from_os(path: String) -> String:
+	var os = OS.get_name()
+	if os == "Windows" or os == "UWP":
+		return path.replace("\\", "/")
+	else:
+		return path
+
+
+func mark_error(error_text: String, time: float = 0.0) -> void:
+	error_label.text = error_text
+	
+	if time != 0.0:
+		await get_tree().create_timer(time).timeout
+		error_label.text = ""
+
+
+func _help() -> void:
+	pass

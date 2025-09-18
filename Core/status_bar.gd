@@ -1,6 +1,6 @@
 extends PanelContainer
 
-@onready var editor: TextEdit = $"../TextEdit"
+@onready var editor: TextEdit = $"../Editor"
 @onready var current_file_label: Label = $MarginContainer/HBoxContainer/CurrentFileLabel
 @onready var caret_pos_label: Label = $MarginContainer/HBoxContainer/CaretPosLabel
 
