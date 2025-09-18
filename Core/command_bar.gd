@@ -38,7 +38,24 @@ func _on_command_submitted(command: String) -> void:
 
 
 func _save(args: Array) -> void:
-	print(args)
+	var save_path: String
+	if args.size() > 0:
+		# save as
+		save_path = path_to_os(args[0])
+		current_file_label.text = save_path
+	else:
+		save_path = current_file_label.text.strip_edges()
+		if save_path == "":
+			mark_error("No file specified to save to!")
+			return
+		
+	var file := FileAccess.open(save_path, FileAccess.WRITE)
+	if file:
+		file.store_string(editor.text)
+		file.close()
+		mark_error("Saved to '%s'" % save_path)
+	else:
+		mark_error("Could not save to '%s'" % save_path)
 
 
 func _open(args: Array) -> void:
@@ -50,9 +67,9 @@ func _open(args: Array) -> void:
 			editor.text = file_text
 			current_file_label.text = path
 		else:
-			mark_error("File: '%s' not found!" % path)
+			mark_error("File '%s' not found!" % path)
 	else:
-		mark_error("'open' needs a file name!")
+		mark_error("Command 'open' needs a file name!")
 
 
 func _quit() -> void:

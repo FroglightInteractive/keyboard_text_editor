@@ -1,10 +1,13 @@
-[gd_scene load_steps=18 format=3 uid="uid://b3hif652o2nud"]
+[gd_scene load_steps=20 format=3 uid="uid://b3hif652o2nud"]
 
+[ext_resource type="Script" uid="uid://btknjpj55ctb2" path="res://Core/main.gd" id="1_avlqc"]
 [ext_resource type="Script" uid="uid://dpai1avhs42yy" path="res://Core/status_bar.gd" id="1_ha1x3"]
 [ext_resource type="FontFile" uid="uid://i7nks7j06ka3" path="res://Assets/Fonts/0xProto_2_500/0xProto-Regular.otf" id="1_xdvn6"]
 [ext_resource type="Script" uid="uid://c816en3tciw3a" path="res://Core/command_bar.gd" id="2_5yh6k"]
 [ext_resource type="FontFile" uid="uid://bs2vnnroo54au" path="res://Assets/Fonts/0xProto_2_500/0xProto-Bold.otf" id="2_avlqc"]
 [ext_resource type="FontFile" uid="uid://ctdc75g0u62f4" path="res://Assets/Fonts/0xProto_2_500/0xProto-Italic.otf" id="3_okbgg"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_avlqc"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h2yge"]
 
@@ -58,6 +61,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_avlqc")
 
 [node name="bg" type="ColorRect" parent="."]
 layout_mode = 1
@@ -88,11 +92,11 @@ visible = false
 layout_mode = 2
 size_flags_vertical = 3
 focus_mode = 2
-mouse_filter = 2
 theme_override_fonts/normal_font = ExtResource("1_xdvn6")
 theme_override_fonts/bold_font = ExtResource("2_avlqc")
 theme_override_fonts/bold_italics_font = ExtResource("3_okbgg")
 theme_override_fonts/italics_font = ExtResource("3_okbgg")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_avlqc")
 bbcode_enabled = true
 text = "[b][Insert name here]
 (c) FroglightInteractive 2025
