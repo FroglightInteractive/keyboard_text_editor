@@ -69,17 +69,18 @@ Distributed under the terms of the MIT license. See: https://opensource.org/lice
 
 [b]-- Commands --[/b]
 
-[b][color=green]help[/color][/b]  --  Display this help text
+[b][color=green]help, h[/color][/b]  --  Display this help text
 
-[b][color=green]q[/color][/b]  --  Exit program
+[b][color=green]q, quit[/color][/b]  --  Exit program
 
 [b][color=green]esc[/color][/b]  --  Exit this help text
 
-[b][color=green]o[/color][color=yellow] [i]<filename>[/i][/color][/b]  --  Open the named file
+[b][color=green]o, open[/color][color=yellow] [i]<filename>[/i][/color][/b]  --  Open the named file
 
-[b][color=green]w[/color][color=yellow] [i][<filename>][/i][/color][/b]  --  Save the document into a new file or into the existing file
+[b][color=green]w, write[/color][color=yellow] [i][<filename>][/i][/color][/b]  --  Save the document into a new file or into the existing file
 
 [b][color=green]alias[/color][color=yellow] [i]<name> <command>[/i][/color][/b]  --  Make an alias with the given name to the given command"
+threaded = true
 
 [node name="TextEdit" type="CodeEdit" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -87,12 +88,13 @@ size_flags_vertical = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_vym7j")
-theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxEmpty_qtvq4")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_qtvq4")
 theme_override_styles/read_only = SubResource("StyleBoxEmpty_qtvq4")
 caret_type = 1
 caret_blink = true
+caret_draw_when_editable_disabled = true
+highlight_all_occurrences = true
 gutters_draw_line_numbers = true
 indent_automatic = true
 auto_brace_completion_enabled = true
