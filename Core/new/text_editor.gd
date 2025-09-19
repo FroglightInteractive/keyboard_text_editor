@@ -33,11 +33,14 @@ var command_aliases: Dictionary[String, String] = {
 }
 
 var in_help: bool = false
+var filename: String = ""
 
 
 func _ready() -> void:
 	if not DirAccess.dir_exists_absolute("user://settings/"):
 		DirAccess.make_dir_absolute("user://settings/")
+	
+	set_filename("")
 	
 	load_aliases()
 	
@@ -165,10 +168,11 @@ func _save(args: Array) -> void:
 	if args.size() > 0:
 		# save as
 		save_path = path_to_os(args[0])
-		current_file_label.text = save_path
+		set_filename(save_path)
 	else:
-		save_path = current_file_label.text.strip_edges()
+		save_path = filename.strip_edges()
 		if save_path == "":
+			mark_error("No file path specified")
 			return
 		
 	var file := FileAccess.open(save_path, FileAccess.WRITE)
@@ -186,7 +190,7 @@ func _open(args: Array) -> void:
 		if file:
 			var file_text = file.get_as_text()
 			editor.text = file_text
-			current_file_label.text = path
+			set_filename(path)
 		else:
 			mark_error("File '%s' not found" % path)
 	else:
@@ -237,18 +241,49 @@ func load_aliases() -> void:
 
 
 func _make_alias(args: Array) -> void:
-	if args.size() >= 2:
-		var alias_name = args[0]
-		var real_cmd = args[1]
-		if commands.has(real_cmd):
-			command_aliases[alias_name] = real_cmd
-			save_aliases()
-			print("Alias '%s' -> '%s' added" % [alias_name, real_cmd])
-		else:
-			mark_error("alias: command '%s' not found" % real_cmd)
-	else:
-		mark_error("Usage: alias <name> <command>")
+	# for list do, alias
+	# for remove do, alias -r/-remove aliasname
+	# for make, do alias aliasname command
+	
+	match args.size():
+		0:
+			_list_aliases()
+		2:
+			var alias_name = args[0]
+			var real_cmd = args[1]
+			
+			if alias_name == "-r" or alias_name == "-remove":
+				_remove_alias(real_cmd)
+			
+			elif commands.has(real_cmd):
+				command_aliases[alias_name] = real_cmd
+				save_aliases()
+				print("Alias '%s' -> '%s' added" % [alias_name, real_cmd])
+			else:
+				mark_error("alias: command '%s' not found" % real_cmd)
+		_:
+			mark_error("Usage: alias <name> <command>")
 
 
 func _quit(_args: Array) -> void:
 	get_tree().quit()
+
+
+func _list_aliases() -> void:
+	pass
+
+
+func _remove_alias(alias: String) -> void:
+	if command_aliases.has(alias):
+		command_aliases.erase(alias)
+		save_aliases()
+	else:
+		mark_error("alias: cannot remove alias '%s', does not exist" % alias)
+
+
+func set_filename(file_name: String) -> void:
+	filename = file_name
+	if file_name == "":
+		current_file_label.text = "[no file]"
+	else:
+		current_file_label.text = file_name
