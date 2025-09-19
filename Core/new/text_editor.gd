@@ -8,6 +8,8 @@ extends Control
 @onready var help_screen: RichTextLabel = $MarginContainer/VBoxContainer/HelpScreen
 @onready var error_label: Label = $MarginContainer/VBoxContainer/HBoxContainer/ErrorLabel
 
+const ALIAS_SAVE_PATH: String = "user://settings/aliases.json"
+
 enum EditorMode {
 	NORMAL,
 	INSERT,
@@ -15,14 +17,18 @@ enum EditorMode {
 }
 var mode: EditorMode = EditorMode.NORMAL
 
+var commands: Dictionary[String, Callable] = {
+	"help": _show_help,
+	"q": _quit,
+	"w": _save,
+	"o": _open,
+	"alias": _make_alias,
+}
+
 var command_aliases: Dictionary[String, String] = {
-	"q": "q",
 	"quit": "q",
-	"w": "w",
 	"write": "w",
-	"o": "o",
 	"open": "o",
-	"help": "help",
 	"h": "help",
 }
 
@@ -30,6 +36,11 @@ var in_help: bool = false
 
 
 func _ready() -> void:
+	if not DirAccess.dir_exists_absolute("user://settings/"):
+		DirAccess.make_dir_absolute("user://settings/")
+	
+	load_aliases()
+	
 	update_ui()
 	editor.grab_focus()
 	command_bar.hide()
@@ -66,7 +77,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					KEY_K:
 						editor.set_caret_line(editor.get_caret_line() - 1)
 					KEY_F1:
-						_show_help()
+						_show_help([])
 			EditorMode.INSERT:
 				match event.keycode:
 					KEY_ESCAPE:
@@ -105,34 +116,12 @@ func _on_command_bar_text_submitted(new_text: String) -> void:
 	if command_aliases.has(cmd):
 		cmd = command_aliases[cmd]
 	
-	# handle alias definition command
-	if cmd == "alias":
-		if args.size() >= 2:
-			var alias_name = args[0]
-			var real_cmd = args[1]
-			command_aliases[alias_name] = real_cmd
-			print("Alias '%s' -> '%s' added" % [alias_name, real_cmd])
-		else:
-			mark_error("Usage: alias <name> <command>", 2)
-		mode = EditorMode.NORMAL
-		command_bar.hide()
-		editor.grab_focus()
-		update_ui()
-		return
-	
-	match cmd:
-		"q":
-			get_tree().quit()
-		"w":
-			_save(args)
-		"o":
-			_open(args)
-		"help":
-			_show_help()
-		"":
-			mark_error("No command given", 2)
-		_:
-			mark_error("Invalid Command", 2)
+	if commands.has(cmd):
+		commands[cmd].call(args)
+	elif cmd == "":
+		mark_error("No command given")
+	else:
+		mark_error("Invalid Command")
 	
 	mode = EditorMode.NORMAL
 	command_bar.hide()
@@ -187,7 +176,7 @@ func _save(args: Array) -> void:
 		file.store_string(editor.text)
 		file.close()
 	else:
-		mark_error("Could not save to '%s'" % save_path, 2)
+		mark_error("Could not save to '%s'" % save_path)
 
 
 func _open(args: Array) -> void:
@@ -199,9 +188,9 @@ func _open(args: Array) -> void:
 			editor.text = file_text
 			current_file_label.text = path
 		else:
-			mark_error("File '%s' not found" % path, 2)
+			mark_error("File '%s' not found" % path)
 	else:
-		mark_error("Command 'open' needs a file name", 2)
+		mark_error("Command 'open' needs a file name")
 
 
 func _hide_help() -> void:
@@ -211,15 +200,55 @@ func _hide_help() -> void:
 	editor.grab_focus()
 
 
-func _show_help() -> void:
+func _show_help(_args: Array) -> void:
 	in_help = true
 	help_screen.show()
 	editor.hide()
 
 
-func mark_error(error_text: String, time: float = 0.0) -> void:
+func mark_error(error_text: String, time: float = 2.0) -> void:
 	error_label.text = error_text
 	
 	if time > 0.0:
 		await get_tree().create_timer(time).timeout
 		error_label.text = ""
+
+
+func save_aliases() -> void:
+	var file = FileAccess.open(ALIAS_SAVE_PATH, FileAccess.WRITE)
+	if file:
+		var json_string = JSON.stringify(command_aliases, "\t")
+		file.store_string(json_string)
+		file.close()
+	else:
+		mark_error("Could not save aliases")
+
+
+func load_aliases() -> void:
+	var file = FileAccess.open(ALIAS_SAVE_PATH, FileAccess.READ)
+	if file:
+		var text = file.get_as_text()
+		var aliases = JSON.parse_string(text)
+		
+		for key in aliases.keys():
+			command_aliases[key] = aliases[key]
+	else:
+		mark_error("Could not load aliases")
+
+
+func _make_alias(args: Array) -> void:
+	if args.size() >= 2:
+		var alias_name = args[0]
+		var real_cmd = args[1]
+		if commands.has(real_cmd):
+			command_aliases[alias_name] = real_cmd
+			save_aliases()
+			print("Alias '%s' -> '%s' added" % [alias_name, real_cmd])
+		else:
+			mark_error("alias: command '%s' not found" % real_cmd)
+	else:
+		mark_error("Usage: alias <name> <command>")
+
+
+func _quit(_args: Array) -> void:
+	get_tree().quit()
