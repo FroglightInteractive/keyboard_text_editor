@@ -20,7 +20,9 @@ var mode: EditorMode = EditorMode.NORMAL
 var commands: Dictionary[String, Callable] = {
 	"help": _show_help,
 	"q": _quit,
+	"q!": _force_quit,
 	"w": _save,
+	"wq": _save_and_quit,
 	"o": _open,
 	"alias": _make_alias,
 }
@@ -34,16 +36,17 @@ var command_aliases: Dictionary[String, String] = {
 
 var in_help: bool = false
 var filename: String = ""
+var is_dirty: bool = false
 
 
 func _ready() -> void:
 	if not DirAccess.dir_exists_absolute("user://settings/"):
 		DirAccess.make_dir_absolute("user://settings/")
-	
+
 	set_filename("")
-	
+
 	load_aliases()
-	
+
 	update_ui()
 	editor.grab_focus()
 	command_bar.hide()
@@ -56,7 +59,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_hide_help()
 			accept_event()
 		return
-	
+
 	if event is InputEventKey and event.pressed:
 		match mode:
 			EditorMode.NORMAL:
@@ -114,18 +117,18 @@ func _on_command_bar_text_submitted(new_text: String) -> void:
 	var args = new_text.split(" ")
 	var cmd = args[0]
 	args.remove_at(0)
-	
+
 	# aliases
 	if command_aliases.has(cmd):
 		cmd = command_aliases[cmd]
-	
+
 	if commands.has(cmd):
 		commands[cmd].call(args)
 	elif cmd == "":
 		mark_error("No command given")
 	else:
 		mark_error("Invalid Command")
-	
+
 	mode = EditorMode.NORMAL
 	command_bar.hide()
 	editor.grab_focus()
@@ -174,11 +177,12 @@ func _save(args: Array) -> void:
 		if save_path == "":
 			mark_error("No file path specified")
 			return
-		
+
 	var file := FileAccess.open(save_path, FileAccess.WRITE)
 	if file:
 		file.store_string(editor.text)
 		file.close()
+		is_dirty = false
 	else:
 		mark_error("Could not save to '%s'" % save_path)
 
@@ -191,6 +195,7 @@ func _open(args: Array) -> void:
 			var file_text = file.get_as_text()
 			editor.text = file_text
 			set_filename(path)
+			is_dirty = false
 		else:
 			mark_error("File '%s' not found" % path)
 	else:
@@ -212,7 +217,7 @@ func _show_help(_args: Array) -> void:
 
 func mark_error(error_text: String, time: float = 2.0) -> void:
 	error_label.text = error_text
-	
+
 	if time > 0.0:
 		await get_tree().create_timer(time).timeout
 		error_label.text = ""
@@ -233,7 +238,7 @@ func load_aliases() -> void:
 	if file:
 		var text = file.get_as_text()
 		var aliases = JSON.parse_string(text)
-		
+
 		for key in aliases.keys():
 			command_aliases[key] = aliases[key]
 	else:
@@ -244,17 +249,17 @@ func _make_alias(args: Array) -> void:
 	# for list do, alias
 	# for remove do, alias -r/-remove aliasname
 	# for make, do alias aliasname command
-	
+
 	match args.size():
 		0:
 			_list_aliases()
 		2:
 			var alias_name = args[0]
 			var real_cmd = args[1]
-			
+
 			if alias_name == "-r" or alias_name == "-remove":
 				_remove_alias(real_cmd)
-			
+
 			elif commands.has(real_cmd):
 				command_aliases[alias_name] = real_cmd
 				save_aliases()
@@ -266,7 +271,20 @@ func _make_alias(args: Array) -> void:
 
 
 func _quit(_args: Array) -> void:
+	if is_dirty:
+		mark_error("No write since last change (add ! to override)")
+	else:
+		get_tree().quit()
+
+
+func _force_quit(_args: Array) -> void:
 	get_tree().quit()
+
+
+func _save_and_quit(_args: Array) -> void:
+	_save([])
+	if not is_dirty:
+		get_tree().quit()
 
 
 func _list_aliases() -> void:
@@ -287,3 +305,7 @@ func set_filename(file_name: String) -> void:
 		current_file_label.text = "[no file]"
 	else:
 		current_file_label.text = file_name
+
+
+func _on_text_edit_text_changed() -> void:
+	is_dirty = true

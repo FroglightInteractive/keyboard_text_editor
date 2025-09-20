@@ -130,7 +130,6 @@ label_settings = SubResource("LabelSettings_kguml")
 horizontal_alignment = 1
 
 [node name="CurrentFileLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/normal = SubResource("StyleBoxFlat_qtvq4")
@@ -156,5 +155,6 @@ theme_override_styles/read_only = SubResource("StyleBoxEmpty_0xtr2")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_0xtr2")
 
 [connection signal="caret_changed" from="MarginContainer/VBoxContainer/TextEdit" to="." method="_on_text_edit_caret_changed"]
+[connection signal="text_changed" from="MarginContainer/VBoxContainer/TextEdit" to="." method="_on_text_edit_text_changed"]
 [connection signal="gui_input" from="MarginContainer/VBoxContainer/CommandBar" to="." method="_on_command_bar_gui_input"]
 [connection signal="text_submitted" from="MarginContainer/VBoxContainer/CommandBar" to="." method="_on_command_bar_text_submitted"]
